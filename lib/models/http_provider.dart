@@ -8,11 +8,13 @@ class HttpProvider with ChangeNotifier {
 
   int get jumlahData => _data.length;
 
-  void connectApi(String id) async {
+  void connectApi(String id, String name, String email) async {
     Uri url = Uri.parse("https://reqres.in/api/users/" + id);
 
-    var hasilResponse = await http.get(url);
-    _data = (jsonDecode(hasilResponse.body))["data"];
+    var hasilResponse =
+        await http.put(url, body: {"name": name, "email": email});
+    _data = (jsonDecode(hasilResponse.body));
+
     notifyListeners();
   }
 }

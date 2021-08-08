@@ -11,7 +11,7 @@ class HomeProvider extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("GET - PROVIDER"),
+        title: Text("UPDATE - PROVIDER"),
       ),
       body: Container(
         width: double.infinity,
@@ -19,35 +19,14 @@ class HomeProvider extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(50),
-              child: Container(
-                child: Consumer<HttpProvider>(
-                    builder: (context, value, child) => Image.network(
-                        (value.data["avatar"] == null)
-                            ? "https://reqres.in/img/faces/2-image.jpg"
-                            : value.data["avatar"])),
-                height: 100,
-                width: 100,
-              ),
-            ),
-            FittedBox(
-                child: Consumer<HttpProvider>(
-              builder: (context, value, child) => Text(
-                (value.data["id"] == null)
-                    ? "ID : Belum ada data"
-                    : "ID : ${value.data["id"]}",
-                style: TextStyle(fontSize: 20),
-              ),
-            )),
             SizedBox(height: 20),
             FittedBox(child: Text("Name : ", style: TextStyle(fontSize: 20))),
             FittedBox(
                 child: Consumer<HttpProvider>(
               builder: (context, value, child) => Text(
-                (value.data["first_name"] == null)
-                    ? "Name : Belum ada data"
-                    : "Name" + value.data["first_name"] + " " + value.data["last_name"],
+                (value.data["name"] == null)
+                    ? " Belum ada data"
+                    : value.data["name"],
                 style: TextStyle(fontSize: 20),
               ),
             )),
@@ -57,8 +36,8 @@ class HomeProvider extends StatelessWidget {
                 child: Consumer<HttpProvider>(
               builder: (context, value, child) => Text(
                 (value.data["email"] == null)
-                    ? "Job : Belum ada data"
-                    : "Job : ${value.data["email"]}",
+                    ? "Belum ada data"
+                    : "${value.data["email"]}",
                 style: TextStyle(fontSize: 20),
               ),
             )),
@@ -66,7 +45,7 @@ class HomeProvider extends StatelessWidget {
             SizedBox(height: 100),
             OutlinedButton(
               onPressed: () {
-                return dataProv.connectApi((1+Random().nextInt(20)).toString());
+                return dataProv.connectApi("1", "Fadil", "tirta@mail.com");
               },
               child: Text(
                 "POST DATA",

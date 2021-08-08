@@ -15,7 +15,7 @@ class _HomeStatefulState extends State<HomeStateful> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("GET - STATEFUL"),
+        title: Text("UPDATE - STATEFUL"),
       ),
       body: Container(
         width: double.infinity,
@@ -23,32 +23,13 @@ class _HomeStatefulState extends State<HomeStateful> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(50),
-              child: Container(
-                child: Image.network((dataResponse.avatar == null)
-                    ? "https://reqres.in/img/faces/2-image.jpg"
-                    : dataResponse.avatar),
-                height: 100,
-                width: 100,
-              ),
-            ),
-            SizedBox(height: 20),
-            FittedBox(
-              child: Text(
-                (dataResponse.id == null)
-                    ? "ID : Belum ada id"
-                    : "ID : ${dataResponse.id}",
-                style: TextStyle(fontSize: 20),
-              ),
-            ),
             SizedBox(height: 20),
             FittedBox(child: Text("Name : ", style: TextStyle(fontSize: 20))),
             FittedBox(
               child: Text(
-                (dataResponse.fullname == null)
+                (dataResponse.name == null)
                     ? "Belum ada name"
-                    : "${dataResponse.fullname}",
+                    : "${dataResponse.name}",
                 style: TextStyle(fontSize: 20),
               ),
             ),
@@ -66,14 +47,15 @@ class _HomeStatefulState extends State<HomeStateful> {
             SizedBox(height: 100),
             OutlinedButton(
               onPressed: () {
-                HttpStateFul.connectApi((1+Random().nextInt(10)).toString()).then((value) {
+                HttpStateFul.connectApi("2", "Rizki", "rizki@mail.com")
+                    .then((value) {
                   setState(() {
                     dataResponse = value;
                   });
                 });
               },
               child: Text(
-                "GET DATA",
+                "UPDATE DATA",
                 style: TextStyle(
                   fontSize: 25,
                 ),
