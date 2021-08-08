@@ -47,10 +47,7 @@ class HomeProvider extends StatelessWidget {
               builder: (context, value, child) => Text(
                 (value.data["first_name"] == null)
                     ? "Name : Belum ada data"
-                    : "Name" +
-                        value.data["first_name"] +
-                        " " +
-                        value.data["last_name"],
+                    : "Name" + value.data["first_name"] + " " + value.data["last_name"],
                 style: TextStyle(fontSize: 20),
               ),
             )),
@@ -69,8 +66,7 @@ class HomeProvider extends StatelessWidget {
             SizedBox(height: 100),
             OutlinedButton(
               onPressed: () {
-                return dataProv
-                    .connectApi((1 + Random().nextInt(20)).toString());
+                return dataProv.connectApi((1+Random().nextInt(20)).toString());
               },
               child: Text(
                 "POST DATA",
