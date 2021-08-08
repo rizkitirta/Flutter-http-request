@@ -2,23 +2,22 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-class HttpStateful {
-  String id, name, job, createdAt;
+class HttpStateFul {
+  String id, fullname, email, avatar;
 
-  HttpStateful({this.id, this.name, this.job, this.createdAt});
+  HttpStateFul({this.id, this.fullname, this.email, this.avatar});
 
-  static Future<HttpStateful> connectApi(String name, String job) async {
-    Uri urlUser = Uri.parse("https://reqres.in/api/users");
+  static Future<HttpStateFul> connectApi(String id) async {
+    Uri url = Uri.parse("https://reqres.in/api/users/" + id);
 
-    var hasilResponse =
-        await http.post(urlUser, body: {"name": name, "job": job});
+    var hasilResponse = await http.get(url);
+    var data = (jsonDecode(hasilResponse.body))["data"];
 
-    var data = jsonDecode(hasilResponse.body);
-
-    return HttpStateful(
-        id: data["id"],
-        name: data["name"],
-        job: data["job"],
-        createdAt: data["createdAt"]);
+    return HttpStateFul(
+        id: data["id"].toString(),
+        fullname: data["first_name"],
+        email: data["email"],
+        avatar: data["avatar"]);
+    //print(data);
   }
 }
