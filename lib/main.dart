@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_http_request/providers/players.dart';
 import 'package:provider/provider.dart';
 
-import './models/http_provider.dart';
-
+import './pages/detail_player_page.dart';
+import './pages/add_player_page.dart';
 import './pages/home_page.dart';
 
 void main() {
@@ -12,11 +13,15 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: ChangeNotifierProvider(
-        create: (context) => HttpProvider(),
-        child: HomePage(),
+    return ChangeNotifierProvider(
+      create: (context) => Players(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: HomePage(),
+        routes: {
+          AddPlayer.routeName: (context) => AddPlayer(),
+          DetailPlayer.routeName: (context) => DetailPlayer(),
+        },
       ),
     );
   }
