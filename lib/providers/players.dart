@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import '../models/player.dart';
 
 class Players with ChangeNotifier {
@@ -19,6 +20,7 @@ class Players with ChangeNotifier {
 
     Uri url = Uri.parse(
         "https://flutter-crud-419ce-default-rtdb.firebaseio.com/players.json");
+
     return http
         .post(
       url,
@@ -73,6 +75,31 @@ class Players with ChangeNotifier {
         duration: Duration(milliseconds: 500),
       ),
     );
+    notifyListeners();
+  }
+
+  //Get data
+  Future<void> initialData() async {
+    Uri url = Uri.parse(
+        "https://flutter-crud-419ce-default-rtdb.firebaseio.com/players.json");
+
+    var hasilGetData = await http.get(url);
+
+    var dataResponse = jsonDecode(hasilGetData.body) as Map<String, dynamic>;
+
+    dataResponse.forEach((key, value) {
+      DateTime createdAt =
+          DateFormat("yyyy-mm-dd hh:mm:ss").parse(value["createdAt"]);
+      //print(value["name"]);
+
+      _allPlayer.add(Player(
+        id: key,
+        name: value["name"],
+        position: value["position"],
+        createdAt: createdAt,
+      ));
+    });
+
     notifyListeners();
   }
 }
