@@ -64,7 +64,6 @@ class DetailPlayer extends StatelessWidget {
                     nameController.text,
                     positionController.text,
                     imageController.text,
-                    context,
                   );
                   Navigator.pop(context);
                 },
@@ -75,13 +74,19 @@ class DetailPlayer extends StatelessWidget {
                 alignment: Alignment.centerRight,
                 child: OutlinedButton(
                   onPressed: () {
-                    players.editPlayer(
+                    players
+                        .editPlayer(
                       playerId,
                       nameController.text,
                       positionController.text,
                       imageController.text,
-                      context,
-                    );
+                    )
+                        .then((value) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text("Berhasil diedit"),
+                        duration: Duration(seconds: 2),
+                      ));
+                    });
                     Navigator.pop(context);
                   },
                   child: Text(

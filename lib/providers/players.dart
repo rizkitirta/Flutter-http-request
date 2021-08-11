@@ -51,20 +51,27 @@ class Players with ChangeNotifier {
     );
   }
 
-  void editPlayer(String id, String name, String position, String image,
-      BuildContext context) {
-    Player selectPlayer = _allPlayer.firstWhere((element) => element.id == id);
-    selectPlayer.name = name;
-    selectPlayer.position = position;
-    selectPlayer.imageUrl = image;
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text("Berhasil diubah"),
-        duration: Duration(seconds: 2),
+ //Edit Data Firebase
+  Future<void> editPlayer(
+      String id, String name, String position, String image) {
+    Uri url = Uri.parse("https://http-req-bec2d-default-rtdb.firebaseio.com/players/$id.json");
+    return http.put(url,
+        body: json.encode(
+        {
+          "name": name,
+          "position": position,
+          "imageUrl": image,
+        },
       ),
+    ).then(
+      (response) {
+        Player selectPlayer = _allPlayer.firstWhere((element) => element.id == id);
+        selectPlayer.name = name;
+        selectPlayer.position = position;
+        selectPlayer.imageUrl = image;
+        notifyListeners();
+      },
     );
-    notifyListeners();
   }
 
   void deletePlayer(String id, BuildContext context) {

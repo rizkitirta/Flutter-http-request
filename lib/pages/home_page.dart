@@ -16,13 +16,13 @@ class _HomePageState extends State<HomePage> {
 
   bool isInit = true;
   @override
-  void didChangeDependencies() {
-    if (isInit) {
-      Provider.of<Players>(context).initialData();
-    }
-    isInit = false;
-    super.didChangeDependencies();
-  }
+  // void didChangeDependencies() {
+  //   if (isInit) {
+  //     Provider.of<Players>(context).initialData();
+  //   }
+  //   isInit = false;
+  //   super.didChangeDependencies();
+  // }
 
   @override
   void dispose() {
