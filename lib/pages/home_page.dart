@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -15,7 +16,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   bool isInit = true;
-  @override
+  // @override
   // void didChangeDependencies() {
   //   if (isInit) {
   //     Provider.of<Players>(context).initialData();
@@ -24,12 +25,22 @@ class _HomePageState extends State<HomePage> {
   //   super.didChangeDependencies();
   // }
 
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    isInit = true;
-    super.dispose();
+   @override
+  void didChangeDependencies() {
+    if (isInit) {
+      Provider.of<Players>(context).initialData();
+    }
+    isInit = false;
+    super.didChangeDependencies();
   }
+
+  // @override
+  // void dispose() {
+  //   // TODO: implement dispose
+  //   isInit = true;
+  //   Provider.of<Players>(context).initialData();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -81,9 +92,21 @@ class _HomePageState extends State<HomePage> {
                       arguments: id,
                     );
                   },
-                  leading: CircleAvatar(
-                    backgroundImage: NetworkImage(
-                      allPlayerProvider.allPlayer[index].imageUrl,
+                  // leading: CircleAvatar(
+                  //   backgroundImage: NetworkImage(
+                  //     allPlayerProvider.allPlayer[index].imageUrl,
+                  //   ),
+                  // ),
+                  leading: ClipRRect(
+                    borderRadius: BorderRadius.circular(50),
+                    child: Container(
+                      width: 50,
+                      height: 50,
+                      child: CachedNetworkImage(
+                          imageUrl: allPlayerProvider.allPlayer[index].imageUrl,
+                          placeholder: (context, url) => CircularProgressIndicator(),
+                          errorWidget: (context, url, error) => Icon(Icons.error),
+                      ),
                     ),
                   ),
                   title: Text(
@@ -95,7 +118,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   trailing: IconButton(
                     onPressed: () {
-                      allPlayerProvider.deletePlayer(id, context);
+                      allPlayerProvider.deletePlayer(id);
                     },
                     icon: Icon(Icons.delete),
                   ),

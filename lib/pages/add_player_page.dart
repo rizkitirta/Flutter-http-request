@@ -9,23 +9,18 @@ class AddPlayer extends StatelessWidget {
   final TextEditingController positionController = TextEditingController();
   final TextEditingController imageController = TextEditingController();
 
+ 
+
   @override
   Widget build(BuildContext context) {
     final players = Provider.of<Players>(context, listen: false);
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("ADD PLAYER"),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.save),
-            onPressed: () {
-              players
-                  .addPlayer(
+
+    final Function addPlayer = () {
+       players.addPlayer(
                 nameController.text,
                 positionController.text,
                 imageController.text,
-              )
-                  .then(
+              ).then(
                 (response) {
                   print("Kembali ke Home & kasih notif snack bar");
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -36,8 +31,28 @@ class AddPlayer extends StatelessWidget {
                   );
                   Navigator.pop(context);
                 },
-              );
-            },
+              ).catchError((err) {
+                print("run cath");
+                showDialog(context: context, builder: (context) => AlertDialog(
+                  title: Text("Error $err"),
+                  content: Text("Ups terjadi kesalahan"),
+                  actions: [
+                    TextButton(onPressed: () {
+                      Navigator.pop(context);
+                    },
+                     child: Text("Okay"),)
+                  ],
+                ));
+              });
+            };
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("ADD PLAYER"),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.save),
+            onPressed: addPlayer,
           ),
         ],
       ),
@@ -64,52 +79,14 @@ class AddPlayer extends StatelessWidget {
                 decoration: InputDecoration(labelText: "Image URL"),
                 textInputAction: TextInputAction.done,
                 controller: imageController,
-                onEditingComplete: () {
-                  players
-                      .addPlayer(
-                    nameController.text,
-                    positionController.text,
-                    imageController.text,
-                  )
-                      .then(
-                    (response) {
-                      print("Kembali ke Home & kasih notif snack bar");
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text("Berhasil ditambahkan"),
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
-                      Navigator.pop(context);
-                    },
-                  );
-                },
+                onEditingComplete: addPlayer
               ),
               SizedBox(height: 50),
               Container(
                 width: double.infinity,
                 alignment: Alignment.centerRight,
                 child: OutlinedButton(
-                  onPressed: () {
-                    players
-                        .addPlayer(
-                      nameController.text,
-                      positionController.text,
-                      imageController.text,
-                    )
-                        .then(
-                      (response) {
-                        print("Kembali ke Home & kasih notif snack bar");
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("Berhasil ditambahkan"),
-                            duration: Duration(seconds: 2),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
-                    );
-                  },
+                  onPressed: addPlayer,
                   child: Text(
                     "Submit",
                     style: TextStyle(

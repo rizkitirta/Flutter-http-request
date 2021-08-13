@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -26,20 +27,32 @@ class DetailPlayer extends StatelessWidget {
         child: Form(
           child: Column(
             children: [
+              // ClipRRect(
+              //   borderRadius: BorderRadius.circular(100),
+              //   child: Container(
+              //     width: 150,
+              //     height: 150,
+              //     decoration: BoxDecoration(
+              //       color: Colors.blue,
+              //       image: DecorationImage(
+              //         fit: BoxFit.cover,
+              //         image: NetworkImage(imageController.text),
+              //       ),
+              //     ),
+              //   ),
+              // ),
               ClipRRect(
-                borderRadius: BorderRadius.circular(100),
-                child: Container(
-                  width: 150,
-                  height: 150,
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: NetworkImage(imageController.text),
+                    borderRadius: BorderRadius.circular(150),
+                    child: Container(
+                      width: 150,
+                      height: 150,
+                      child: CachedNetworkImage(
+                          imageUrl: imageController.text,
+                          placeholder: (context, url) => CircularProgressIndicator(),
+                          errorWidget: (context, url, error) => Icon(Icons.error),
+                      ),
                     ),
                   ),
-                ),
-              ),
               TextFormField(
                 autocorrect: false,
                 autofocus: true,
@@ -59,13 +72,38 @@ class DetailPlayer extends StatelessWidget {
                 textInputAction: TextInputAction.done,
                 controller: imageController,
                 onEditingComplete: () {
-                  players.editPlayer(
+                  players
+                      .editPlayer(
                     playerId,
                     nameController.text,
                     positionController.text,
                     imageController.text,
-                  );
-                  Navigator.pop(context);
+                  )
+                      .then((value) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("Berhasil diubah"),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                    Navigator.pop(context);
+                  }).catchError((err) {
+                    print("run cath");
+                    showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text("Error $err"),
+                      content: Text("Ups terjadi kesalahan"),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text("Okay"),
+                        )
+                      ],
+                    ));
+                  });
                 },
               ),
               SizedBox(height: 50),
@@ -82,12 +120,14 @@ class DetailPlayer extends StatelessWidget {
                       imageController.text,
                     )
                         .then((value) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text("Berhasil diedit"),
-                        duration: Duration(seconds: 2),
-                      ));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Berhasil diubah"),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                      Navigator.pop(context);
                     });
-                    Navigator.pop(context);
                   },
                   child: Text(
                     "Edit",

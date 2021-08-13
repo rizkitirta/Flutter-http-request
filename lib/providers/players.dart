@@ -15,27 +15,26 @@ class Players with ChangeNotifier {
   Player selectById(String id) =>
       _allPlayer.firstWhere((element) => element.id == id);
 
-  Future<void> addPlayer(String name, String position, String image) {
+  addPlayer(String name, String position, String image) async {
     DateTime datetimeNow = DateTime.now();
 
     Uri url = Uri.parse(
         "https://flutter-crud-419ce-default-rtdb.firebaseio.com/players.json");
 
-    return http
-        .post(
-      url,
-      body: json.encode(
-        {
-          "name": name,
-          "position": position,
-          "imageUrl": image,
-          "createdAt": datetimeNow.toString(),
-        },
-      ),
-    )
-        .then(
-      (response) {
-        print("THEN FUNCTION");
+    try {
+      final response = await http.post(
+        url,
+        body: json.encode(
+          {
+            "name": name,
+            "position": position,
+            "imageUrl": image,
+            "createdAt": datetimeNow.toString(),
+          },
+        ),
+      );
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
         _allPlayer.add(
           Player(
             id: json.decode(response.body)["name"].toString(),
@@ -47,66 +46,102 @@ class Players with ChangeNotifier {
         );
 
         notifyListeners();
-      },
-    );
+      } else {
+        throw ("${response.statusCode}");
+      }
+    } catch (error) {
+      return throw (error);
+    }
   }
 
- //Edit Data Firebase
-  Future<void> editPlayer(
-      String id, String name, String position, String image) {
-    Uri url = Uri.parse("https://http-req-bec2d-default-rtdb.firebaseio.com/players/$id.json");
-    return http.put(url,
+  editPlayer(String id, String name, String position, String image) async {
+    Uri url = Uri.parse(
+        "https://flutter-crud-419ce-default-rtdb.firebaseio.com/players$id.json");
+
+    try {
+      final response = await http.patch(
+        url,
         body: json.encode(
-        {
-          "name": name,
-          "position": position,
-          "imageUrl": image,
-        },
-      ),
-    ).then(
-      (response) {
-        Player selectPlayer = _allPlayer.firstWhere((element) => element.id == id);
+          {
+            "name": name,
+            "position": position,
+            "imageUrl": image,
+          },
+        ),
+      );
+
+      if (response != null) {
+        Player selectPlayer =
+            _allPlayer.firstWhere((element) => element.id == id);
         selectPlayer.name = name;
         selectPlayer.position = position;
         selectPlayer.imageUrl = image;
         notifyListeners();
-      },
-    );
+      } else {
+        throw (response.statusCode);
+      }
+    } catch (err) {
+      return throw (err);
+    }
   }
 
-  void deletePlayer(String id, BuildContext context) {
-    _allPlayer.removeWhere((element) => element.id == id);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text("Berhasil dihapus"),
-        duration: Duration(milliseconds: 500),
-      ),
-    );
-    notifyListeners();
+  deletePlayer(String id) async {
+    Uri url = Uri.parse(
+        "https://flutter-crud-419ce-default-rtdb.firebaseio.com/players/$id.json");
+
+    try {
+      final response = await http.delete(url).then(
+        (response) {
+          _allPlayer.removeWhere((element) => element.id == id);
+          notifyListeners();
+        },
+      );
+
+      if (response.statusCoode) {
+        throw (response.statusCode);
+      }
+    } catch (e) {
+      throw (e);
+    }
   }
 
-  //Get data
   Future<void> initialData() async {
     Uri url = Uri.parse(
         "https://flutter-crud-419ce-default-rtdb.firebaseio.com/players.json");
 
     var hasilGetData = await http.get(url);
 
-    var dataResponse = jsonDecode(hasilGetData.body) as Map<String, dynamic>;
+    var dataResponse = json.decode(hasilGetData.body) as Map<String, dynamic>;
+    print(dataResponse);
 
-    dataResponse.forEach((key, value) {
-      DateTime createdAt =
-          DateFormat("yyyy-mm-dd hh:mm:ss").parse(value["createdAt"]);
-      //print(value["name"]);
+    if (dataResponse != null) {
+      dataResponse.forEach(
+        (key, value) {
+          print(value["craeatedAt"]);
+          DateTime dateTimeParse =
+              DateFormat("yyyy-mm-dd hh:mm:ss").parse(value["createdAt"]);
 
-      _allPlayer.add(Player(
-        id: key,
-        name: value["name"],
-        position: value["position"],
-        createdAt: createdAt,
-      ));
-    });
+          _allPlayer.add(
+            Player(
+              id: key,
+              createdAt: dateTimeParse,
+              imageUrl: value["imageUrl"],
+              name: value["name"],
+              position: value["position"],
+            ),
+          );
+        },
+      );
+      print("BERHASIL MASUKAN DATA LIST");
 
-    notifyListeners();
+      notifyListeners();
+    }
   }
+  // Future<void> deletePlayer(String id){
+  //   Uri uri = Uri.parse("https://flutter-crud-419ce-default-rtdb.firebaseio.com/players/$id.json");
+
+  //   return http.delete(uri).then((res){
+  //     _allPlayer.removeWhere((element) => element.id == id);
+  //   });
+  // }
 }
